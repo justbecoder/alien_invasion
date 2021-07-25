@@ -13,8 +13,12 @@ class AlientInvasion:
     # 获取游戏配置
     self.settings = Settings()
 
-    # 设置屏幕大小
-    self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
+    # 设置屏幕大小 - 全屏
+
+    self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+
+    self.settings.screen_width = self.screen.get_rect().width
+    self.settings.screen_height = self.screen.get_rect().height
 
     # 飞船
     self.ship = Ship(self)
@@ -25,28 +29,42 @@ class AlientInvasion:
   def _check_events(self):
     """ 响应按键和鼠标事件 """
     for event in pygame.event.get():
+      
       if event.type == pygame.QUIT:
+        pygame.quit()
         sys.exit()
-      elif event.type == pygame.KEYDOWN:
-        if event.key == pygame.K_RIGHT:
-          self.ship.move_right = True
-        if event.key == pygame.K_LEFT:
-          # 向左移动飞船
-          self.ship.move_left = True
-        if event.key == pygame.K_UP:
-          self.ship.move_up = True
-        if event.key == pygame.K_DOWN:
-          self.ship.move_down = True
+      if event.type == pygame.KEYDOWN:
+        self._check_keydown_events(event)
 
-      elif event.type == pygame.KEYUP:
-        if event.key == pygame.K_RIGHT:
-          self.ship.move_right = False
-        if event.key == pygame.K_LEFT:
-          self.ship.move_left = False
-        if event.key == pygame.K_UP:
-          self.ship.move_up = False
-        if event.key == pygame.K_DOWN:
-          self.ship.move_down = False
+      if event.type == pygame.KEYUP:
+        self._check_keyup_events(event)
+
+  def _check_keydown_events (self, event):
+    """ 响应按键 """
+    if event.key == pygame.K_RIGHT:
+      self.ship.move_right = True
+    if event.key == pygame.K_LEFT:
+      # 向左移动飞船
+      self.ship.move_left = True
+    if event.key == pygame.K_UP:
+      self.ship.move_up = True
+    if event.key == pygame.K_DOWN:
+      self.ship.move_down = True
+
+    if event.key == pygame.K_q:
+        pygame.quit()
+        sys.exit()
+
+  def _check_keyup_events (self, event):
+    """ 响应松开 """
+    if event.key == pygame.K_RIGHT:
+      self.ship.move_right = False
+    if event.key == pygame.K_LEFT:
+      self.ship.move_left = False
+    if event.key == pygame.K_UP:
+      self.ship.move_up = False
+    if event.key == pygame.K_DOWN:
+      self.ship.move_down = False
 
   def _update_screen(self):
     # 填充背景色
